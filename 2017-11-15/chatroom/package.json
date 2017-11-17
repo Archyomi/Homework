@@ -1,0 +1,19 @@
+{
+  "name": "com.doslin.chatroom",
+  "version": "1.0.0",
+  "description": "websocket 实现的聊天室",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "websocket",
+    "chatroom"
+  ],
+  "author": "doslin",
+  "license": "ISC",
+  "devDependencies": {
+    "mysql": "^2.15.0",
+    "socket.io": "^2.0.4"
+  }
+}

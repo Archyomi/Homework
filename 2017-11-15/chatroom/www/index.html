@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>登录页</title>
+        <script src="http://localhost:8081/socket.io/socket.io.js" charset="utf-8"></script>
+    </head>
+
+    <script type="text/javascript">
+
+        window.onload = function() {
+            let usernameInput = document.getElementById('username');
+            let passwordInput = document.getElementById('password');
+            let loginBtn = document.getElementById('loginBtn');
+            let regBtn = document.getElementById('regBtn');
+            let chatDiv = document.getElementById('chatDiv');
+            let sendBtn = document.getElementById('sendBtn');
+            let msgArea = document.getElementById('msgArea');
+            let msgDiv = document.getElementById('msgDiv');
+
+            let socket = io.connect('ws://localhost:8081/');
+
+            socket.on('msg_register_result', (code, msg)=>{
+                if (code) {
+                    alert('注册失败：' + msg);
+                } else {
+                    alert('注册成功');
+                }
+            });
+
+            socket.on('msg_login_result', (code, msg)=>{
+                if (code) {
+                    alert('登录失败：' + msg);
+                } else {
+                    alert('登录成功');
+                    loginBtn.innerHTML = '退出';
+                    chatDiv.style.display = 'block';
+                }
+            });
+
+            socket.on('msg_send_result', (code, msg)=>{
+                if (code) {
+                    alert('发送失败：' + msg);
+                } else {
+                    msgArea.value = '';
+                    alert('发送成功');
+                    msgDiv.innerHTML += '我：' + msg + '<br/>';
+                }
+            });
+
+            socket.on('send', (username, msg)=>{
+                console.log(username, msg);
+                msgDiv.innerHTML += username + "：" + msg + '<br/>';
+            });
+
+            loginBtn.onclick = function() {
+                if (loginBtn.innerHTML == '登录') {
+                    socket.emit('login', usernameInput.value, passwordInput.value);
+                } else if (loginBtn.innerHTML == '退出'){
+                    loginBtn.innerHTML = '登录';
+                    chatDiv.style.display = 'none';
+                }
+
+            };
+
+            regBtn.onclick = function() {
+                socket.emit('register', usernameInput.value, passwordInput.value);
+            };
+
+            sendBtn.onclick = function() {
+                socket.emit('send', msgArea.value);
+            };
+
+        };
+
+
+    </script>
+
+    <body>
+        <div>
+            账号：<input id="username" type="text" name="username" value="" />
+            密码：<input id="password" type="password" name="password" value="" />
+            <button id="loginBtn" type="button" name="login">登录</button>
+            <button id="regBtn" type="button" name="register">注册</button>
+        </div>
+
+        <div id="chatDiv" style="margin-top:20px;display:none;">
+            <textarea id="msgArea" name="name" rows="4" cols="80"></textarea>
+            <button id="sendBtn" type="button" name="button">发送</button>
+        </div>
+
+        <div id="msgDiv">
+        </div>
+    </body>
+</html>
